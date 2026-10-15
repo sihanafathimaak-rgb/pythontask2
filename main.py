@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 """
 SK 2 - Expense Tracker (Financial Logic & Analytics)
 Single-file CLI app. Python 3.8+. Matplotlib optional (for charts).
@@ -21,8 +20,6 @@ CATEGORIES = ["Food", "Utilities", "Travel", "Rent", "Shopping", "Health",
 TYPES = ("income", "expense")
 CENT = Decimal("0.01")
 
-
-# ----------------------------------------------------------------- validation
 class ValidationError(ValueError):
     pass
 
@@ -69,7 +66,7 @@ class Transaction:
     id: int
     date: str
     category: str
-    amount: str      # stored as string -> no float rounding errors
+    amount: str     
     type: str
     note: str = ""
 
@@ -92,8 +89,6 @@ def build_transaction(tid, d, category, amount, ttype, note=""):
         note=str(note).strip(),
     )
 
-
-# ------------------------------------------------------------------- tracker
 class Tracker:
     def __init__(self, path=DATA_FILE):
         self.path = path
@@ -117,7 +112,6 @@ class Tracker:
         self.save()
         return True
 
-    # --- filtering (date range inclusive on both ends) ---
     def filter(self, start=None, end=None, category=None, ttype=None):
         out = []
         cat = category.strip().title() if category else None
@@ -133,7 +127,6 @@ class Tracker:
             out.append(t)
         return sorted(out, key=lambda x: (x.dt, x.id))
 
-    # --- analytics ---
     @staticmethod
     def summary(txns):
         income = sum((t.amt for t in txns if t.type == "income"), Decimal("0"))
@@ -146,7 +139,7 @@ class Tracker:
         return {"income": income, "expense": expense,
                 "net": income - expense, "by_category": by_cat}
 
-    # --- persistence ---
+  
     def save(self, path=None):
         with open(path or self.path, "w", encoding="utf-8") as f:
             json.dump([asdict(t) for t in self.items], f, indent=2)
@@ -196,8 +189,6 @@ class Tracker:
         self.save()
         return ok, bad
 
-
-# ------------------------------------------------------------------- display
 def money(d):
     return f"{d:,.2f}"
 
@@ -250,8 +241,6 @@ def plot_chart(txns):
     plt.title("Expenses by Category")
     plt.show()
 
-
-# --------------------------------------------------------------------- input
 def ask(prompt, parser, default=None, optional=False):
     while True:
         raw = input(prompt).strip()
@@ -292,8 +281,6 @@ def add_flow(tr):
     t = tr.add(str(d), cat, amt, ttype, note)
     print(f"  Saved: #{t.id} {t.type} {money(t.amt)} on {t.date}")
 
-
-# ------------------------------------------------------------ sample + readme
 SAMPLE_ROWS = [
     ("2025-01-01", "Salary", "55000.00", "income", "January salary"),
     ("2025-01-02", "Rent", "15000.00", "expense", "Monthly rent"),
@@ -375,8 +362,6 @@ def make_sample(tr):
     print("Created: transactions.json, sample_transactions.csv/.json, "
           "sample_report.txt, README.md")
 
-
-# ---------------------------------------------------------------------- menu
 MENU = """
 === Expense Tracker ===
  1. Add transaction
